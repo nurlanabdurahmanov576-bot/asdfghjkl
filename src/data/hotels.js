@@ -98,6 +98,22 @@ export const hotelsData = [
     coordinates: { lat: 48.8661, lng: 2.3045 },
     description: 'The epitome of Parisian haute couture luxury, framed by signature red geraniums and haute cuisine.'
   },
+  {
+    id: 'hotel-paris-2',
+    destinationId: 'paris',
+    name: 'Le Pavillon de la Reine',
+    city: 'Paris',
+    location: 'Le Marais',
+    stars: 5,
+    rating: 4.88,
+    reviews: 820,
+    pricePerNight: 390,
+    type: 'Boutique',
+    image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=800&q=80',
+    amenities: ['Private Courtyard', 'Codage Spa', 'Historic Marais Setting', 'Complimentary Bicycles'],
+    coordinates: { lat: 48.8556, lng: 2.3664 },
+    description: 'Hidden gem in the Place des Vosges, enveloped in romantic ivy and 17th-century aristocratic elegance.'
+  },
 
   // DUBAI HOTELS
   {
@@ -115,5 +131,111 @@ export const hotelsData = [
     amenities: ['Private Beach', 'Cloud 22 Sky Pool', 'Aquaventure Access', 'Celebrity Restaurants'],
     coordinates: { lat: 25.1384, lng: 55.1264 },
     description: 'An iconic ultra-luxury resort rising like a futuristic sculpture on the crescent of Palm Jumeirah.'
+  },
+  {
+    id: 'hotel-dubai-2',
+    destinationId: 'dubai',
+    name: 'Armani Hotel Dubai',
+    city: 'Dubai',
+    location: 'Downtown Dubai',
+    stars: 5,
+    rating: 4.87,
+    reviews: 1420,
+    pricePerNight: 480,
+    type: 'Luxury',
+    image: 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=800&q=80',
+    amenities: ['Inside Burj Khalifa', 'Armani/Spa', 'Direct Dubai Mall Access', 'Fountain Views'],
+    coordinates: { lat: 25.1972, lng: 55.2744 },
+    description: 'Sophisticated minimalist luxury designed personally by Giorgio Armani inside the world\'s tallest tower.'
+  },
+
+  // ROME HOTELS
+  {
+    id: 'hotel-rome-1',
+    destinationId: 'rome',
+    name: 'Hotel de Russie',
+    city: 'Rome',
+    location: 'Piazza del Popolo',
+    stars: 5,
+    rating: 4.92,
+    reviews: 950,
+    pricePerNight: 520,
+    type: 'Luxury',
+    image: 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=800&q=80',
+    amenities: ['Secret Terraced Gardens', 'De Russie Spa', 'Stravinskij Bar', 'Walking Distance to Spanish Steps'],
+    coordinates: { lat: 41.9102, lng: 12.4764 },
+    description: 'Legendary Roman haven favored by artists and royalty, famous for tiered Mediterranean gardens.'
+  },
+
+  // LONDON HOTELS
+  {
+    id: 'hotel-london-1',
+    destinationId: 'london',
+    name: 'The Savoy London',
+    city: 'London',
+    location: 'Covent Garden / Strand',
+    stars: 5,
+    rating: 4.94,
+    reviews: 1650,
+    pricePerNight: 580,
+    type: 'Heritage',
+    image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=800&q=80',
+    amenities: ['Thames River Views', 'American Bar', 'Butler Service', 'Historic Afternoon Tea'],
+    coordinates: { lat: 51.5103, lng: -0.1205 },
+    description: 'British luxury institution on the banks of the Thames, welcoming luminaries since 1889.'
+  },
+
+  // ISTANBUL HOTELS
+  {
+    id: 'hotel-istanbul-1',
+    destinationId: 'istanbul',
+    name: 'Ciragan Palace Kempinski',
+    city: 'Istanbul',
+    location: 'Bosphorus / Besiktas',
+    stars: 5,
+    rating: 4.93,
+    reviews: 1720,
+    pricePerNight: 490,
+    type: 'Heritage',
+    image: 'https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&w=800&q=80',
+    amenities: ['Authentic Ottoman Palace', 'Infinity Pool on Bosphorus', 'Helipad', 'Tugra Royal Dining'],
+    coordinates: { lat: 41.0428, lng: 29.0169 },
+    description: 'The only Ottoman imperial palace and hotel on the Bosphorus, where historical majesty meets luxury.'
+  },
+
+  // NEW YORK HOTELS
+  {
+    id: 'hotel-ny-1',
+    destinationId: 'new-york',
+    name: 'The Plaza New York',
+    city: 'New York',
+    location: 'Fifth Avenue & Central Park',
+    stars: 5,
+    rating: 4.89,
+    reviews: 2100,
+    pricePerNight: 650,
+    type: 'Heritage',
+    image: 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=800&q=80',
+    amenities: ['Central Park South Entrance', 'Guerlain Spa', 'The Palm Court', '24k Gold Bathroom Fixtures'],
+    coordinates: { lat: 40.7644, lng: -73.9745 },
+    description: 'The definitive American luxury icon presiding over Fifth Avenue and Central Park since 1907.'
+  },
+
+  // TASHKENT HOTELS
+  {
+    id: 'hotel-tashkent-1',
+    destinationId: 'tashkent',
+    name: 'Hyatt Regency Tashkent',
+    city: 'Tashkent',
+    location: 'Navoi Avenue',
+    stars: 5,
+    rating: 4.88,
+    reviews: 1240,
+    pricePerNight: 190,
+    type: 'Luxury',
+    image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=800&q=80',
+    amenities: ['Indoor Swimming Pool', 'Armenia Spa', 'Sette Pizza & Bar', 'City Center Location'],
+    coordinates: { lat: 41.3168, lng: 69.2789 },
+    description: 'Premier 5-star destination hotel in the center of Tashkent featuring contemporary art and world-class hospitality.'
   }
 ];

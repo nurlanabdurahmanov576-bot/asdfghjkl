@@ -53,15 +53,18 @@ export default function Planner() {
 
   // Filters for Places
   const [placesCategory, setPlacesCategory] = useState('All');
+  const [placesCityFilter, setPlacesCityFilter] = useState('current');
   const [placesSearch, setPlacesSearch] = useState('');
 
   // Filters for Hotels
   const [hotelTypeFilter, setHotelTypeFilter] = useState('All');
+  const [hotelCityFilter, setHotelCityFilter] = useState('current');
   const [hotelRatingFilter, setHotelRatingFilter] = useState('All');
   const [hotelSearch, setHotelSearch] = useState('');
 
   // Filters for Restaurants
   const [restaurantCuisineFilter, setRestaurantCuisineFilter] = useState('All');
+  const [restaurantCityFilter, setRestaurantCityFilter] = useState('current');
   const [restaurantSearch, setRestaurantSearch] = useState('');
 
   if (!currentTrip) {
@@ -83,25 +86,39 @@ export default function Planner() {
 
   // Filtered Places
   const filteredPlaces = places.filter(p => {
-    const matchesCity = p.destinationId?.toLowerCase() === destLower || p.city?.toLowerCase() === destLower;
+    const matchesCity = placesCityFilter === 'all'
+      ? true
+      : (placesCityFilter === 'current'
+          ? (p.destinationId?.toLowerCase() === destLower || p.city?.toLowerCase() === destLower)
+          : (p.destinationId?.toLowerCase() === placesCityFilter.toLowerCase() || p.city?.toLowerCase() === placesCityFilter.toLowerCase()));
     const matchesCategory = placesCategory === 'All' || p.category === placesCategory;
-    const matchesSearch = !placesSearch || p.name.toLowerCase().includes(placesSearch.toLowerCase());
-    return matchesCategory && matchesSearch;
+    const matchesSearch = !placesSearch || p.name.toLowerCase().includes(placesSearch.toLowerCase()) || p.description.toLowerCase().includes(placesSearch.toLowerCase());
+    return matchesCity && matchesCategory && matchesSearch;
   });
 
   // Filtered Hotels
   const filteredHotels = hotels.filter(h => {
+    const matchesCity = hotelCityFilter === 'all'
+      ? true
+      : (hotelCityFilter === 'current'
+          ? (h.destinationId?.toLowerCase() === destLower || h.city?.toLowerCase() === destLower)
+          : (h.destinationId?.toLowerCase() === hotelCityFilter.toLowerCase() || h.city?.toLowerCase() === hotelCityFilter.toLowerCase()));
     const matchesType = hotelTypeFilter === 'All' || h.type?.toLowerCase().includes(hotelTypeFilter.toLowerCase());
     const matchesRating = hotelRatingFilter === 'All' || h.rating >= Number(hotelRatingFilter);
     const matchesSearch = !hotelSearch || h.name.toLowerCase().includes(hotelSearch.toLowerCase()) || h.location.toLowerCase().includes(hotelSearch.toLowerCase());
-    return matchesType && matchesRating && matchesSearch;
+    return matchesCity && matchesType && matchesRating && matchesSearch;
   });
 
   // Filtered Restaurants
   const filteredRestaurants = restaurants.filter(r => {
+    const matchesCity = restaurantCityFilter === 'all'
+      ? true
+      : (restaurantCityFilter === 'current'
+          ? (r.destinationId?.toLowerCase() === destLower || r.city?.toLowerCase() === destLower)
+          : (r.destinationId?.toLowerCase() === restaurantCityFilter.toLowerCase() || r.city?.toLowerCase() === restaurantCityFilter.toLowerCase()));
     const matchesCuisine = restaurantCuisineFilter === 'All' || r.cuisine.toLowerCase() === restaurantCuisineFilter.toLowerCase();
     const matchesSearch = !restaurantSearch || r.name.toLowerCase().includes(restaurantSearch.toLowerCase()) || r.specialty?.toLowerCase().includes(restaurantSearch.toLowerCase());
-    return matchesCuisine && matchesSearch;
+    return matchesCity && matchesCuisine && matchesSearch;
   });
 
   // Total activities count
@@ -416,24 +433,49 @@ export default function Planner() {
         {activeTab === 'places' && (
           <div>
             <div className="filter-bar">
-              <div className="filter-pills">
-                {['All', 'Culture & Heritage', 'Observation & Views', 'Landmark', 'Art & Experience'].map((cat) => (
-                  <button
-                    key={cat}
-                    type="button"
-                    className={`filter-chip ${placesCategory === cat ? 'active' : ''}`}
-                    onClick={() => setPlacesCategory(cat)}
-                  >
-                    {cat}
-                  </button>
-                ))}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+                <select
+                  className="form-select"
+                  style={{ width: 'auto', padding: '7px 12px', fontSize: '0.85rem', fontWeight: 600 }}
+                  value={placesCityFilter}
+                  onChange={(e) => setPlacesCityFilter(e.target.value)}
+                >
+                  <option value="current">📍 {currentTrip.destination} (Active Trip)</option>
+                  <option value="all">🌍 All Destinations ({places.length} Places)</option>
+                  <option value="tokyo">Tokyo, Japan</option>
+                  <option value="paris">Paris, France</option>
+                  <option value="dubai">Dubai, UAE</option>
+                  <option value="rome">Rome, Italy</option>
+                  <option value="london">London, UK</option>
+                  <option value="istanbul">Istanbul, Turkey</option>
+                  <option value="new-york">New York, USA</option>
+                  <option value="tashkent">Tashkent, Uzbekistan</option>
+                </select>
+
+                <div className="filter-pills">
+                  {['All', 'Culture & Heritage', 'Observation & Views', 'Landmark', 'Art & Experience', 'Parks & Nature', 'Food & Market'].map((cat) => (
+                    <button
+                      key={cat}
+                      type="button"
+                      className={`filter-chip ${placesCategory === cat ? 'active' : ''}`}
+                      onClick={() => setPlacesCategory(cat)}
+                    >
+                      {cat}
+                    </button>
+                  ))}
+                </div>
               </div>
 
-              <SearchBar
-                value={placesSearch}
-                onChange={setPlacesSearch}
-                placeholder="Search sights & attractions..."
-              />
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <span style={{ fontSize: '0.82rem', color: 'var(--text-muted)', fontWeight: 600, whiteSpace: 'nowrap' }}>
+                  {filteredPlaces.length} places found
+                </span>
+                <SearchBar
+                  value={placesSearch}
+                  onChange={setPlacesSearch}
+                  placeholder="Search sights, temples, towers..."
+                />
+              </div>
             </div>
 
             <div className="cards-grid-3">
