@@ -4,6 +4,7 @@ import { destinationsData } from '../data/destinations';
 import { placesData } from '../data/places';
 import { hotelsData } from '../data/hotels';
 import { restaurantsData } from '../data/restaurants';
+import { currencies, currencyList, convertFromUSD, convertCurrency, formatCurrencyAmount } from '../utils/currency';
 
 const TripContext = createContext(null);
 
@@ -12,6 +13,7 @@ const STORAGE_KEY_ACTIVE_ID = 'triply_active_trip_id_v1';
 const STORAGE_KEY_USER = 'triply_user_v1';
 const STORAGE_KEY_FAVORITES = 'triply_favorites_v1';
 const STORAGE_KEY_NOTIFICATIONS = 'triply_notifications_v1';
+const STORAGE_KEY_CURRENCY = 'triply_currency_v1';
 
 const defaultUser = {
   name: 'Alexandre Mercer',
@@ -104,6 +106,16 @@ export function TripProvider({ children }) {
     }
   });
 
+  // Selected Currency (USD, EUR, RUB, UZS, JPY, GBP, AED, TRY, KZT, CNY)
+  const [selectedCurrency, setSelectedCurrency] = useState(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY_CURRENCY);
+      return saved && currencies[saved] ? saved : 'USD';
+    } catch {
+      return 'USD';
+    }
+  });
+
   // Toast message
   const [toast, setToast] = useState(null);
 
@@ -127,6 +139,10 @@ export function TripProvider({ children }) {
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY_NOTIFICATIONS, JSON.stringify(notifications));
   }, [notifications]);
+
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEY_CURRENCY, selectedCurrency);
+  }, [selectedCurrency]);
 
   // Show Toast
   const showToast = (message, type = 'success') => {
@@ -268,6 +284,50 @@ export function TripProvider({ children }) {
       return remaining;
     });
     showToast('Trip deleted.', 'info');
+  };
+
+  // Cancel Trip (marks trip as Cancelled)
+  const cancelTrip = (tripId) => {
+    setTrips(prev => prev.map(t => {
+      if (t.id === tripId) {
+        return { ...t, status: 'Cancelled' };
+      }
+      return t;
+    }));
+    showToast('Trip status changed to Cancelled.', 'info');
+  };
+
+  // Restore Trip (marks trip back as Upcoming)
+  const restoreTrip = (tripId) => {
+    setTrips(prev => prev.map(t => {
+      if (t.id === tripId) {
+        return { ...t, status: 'Upcoming' };
+      }
+      return t;
+    }));
+    showToast('Trip restored to Upcoming status! ✈️');
+  };
+
+  // Change Trip Destination / Details
+  const changeTripDestination = (tripId, newDestName, newTitle, newBudget, newDates) => {
+    const destObj = destinationsData.find(d => d.name.toLowerCase() === (newDestName || '').toLowerCase());
+    setTrips(prev => prev.map(t => {
+      if (t.id === tripId) {
+        return {
+          ...t,
+          title: newTitle || `${newDestName} Adventure`,
+          destination: newDestName,
+          country: destObj ? destObj.country : t.country,
+          destinationId: destObj ? destObj.id : newDestName.toLowerCase(),
+          budget: newBudget ? Number(newBudget) : t.budget,
+          datesDisplay: newDates || t.datesDisplay,
+          coverImage: destObj ? destObj.image : t.coverImage,
+          status: 'Upcoming'
+        };
+      }
+      return t;
+    }));
+    showToast(`Trip changed to ${newDestName}!`);
   };
 
   // Add Activity to Day
@@ -476,15 +536,22 @@ export function TripProvider({ children }) {
     });
   };
 
-  // Mark all notifications read
-  const markNotificationsRead = () => {
-    setNotifications(prev => prev.map(n => ({ ...n, read: true })));
+  // Format currency helper
+  const formatCurrency = (amountUSD) => {
+    return formatCurrencyAmount(amountUSD, selectedCurrency);
   };
 
-  // Update user profile
-  const updateUserProfile = (newFields) => {
-    setUser(prev => ({ ...prev, ...newFields }));
-    showToast('Profile saved successfully!');
+  // Reset all data to defaults
+  const resetAllData = () => {
+    setTrips(initialTripsData);
+    setActiveTripId(initialTripsData[0]?.id || 'trip-tokyo-adventure');
+    setUser(defaultUser);
+    setSelectedCurrency('USD');
+    localStorage.removeItem(STORAGE_KEY_TRIPS);
+    localStorage.removeItem(STORAGE_KEY_ACTIVE_ID);
+    localStorage.removeItem(STORAGE_KEY_USER);
+    localStorage.removeItem(STORAGE_KEY_CURRENCY);
+    showToast('Reset to original demo data.', 'info');
   };
 
   return (
@@ -497,6 +564,10 @@ export function TripProvider({ children }) {
         createTrip,
         updateTrip,
         deleteTrip,
+        cancelTrip,
+        restoreTrip,
+        changeTripDestination,
+        resetAllData,
         addActivity,
         updateActivity,
         deleteActivity,
@@ -518,6 +589,13 @@ export function TripProvider({ children }) {
         toggleFavorite,
         notifications,
         markNotificationsRead,
+        selectedCurrency,
+        setSelectedCurrency,
+        currencies,
+        currencyList,
+        formatCurrency,
+        convertFromUSD,
+        convertCurrency,
         toast,
         showToast
       }}

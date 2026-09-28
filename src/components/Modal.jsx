@@ -1,19 +1,21 @@
 import React, { useEffect } from 'react';
 import { X } from 'lucide-react';
 
-export default function Modal({ isOpen, onClose, title, children, maxWidth = '560px' }) {
+export default function Modal({ isOpen, onClose, title, children, maxWidth = 'max-w-lg' }) {
   useEffect(() => {
     const handleKeyDown = (e) => {
-      if (e.key === 'Escape' && isOpen) {
-        onClose();
-      }
+      if (e.key === 'Escape') onClose();
     };
+
     if (isOpen) {
       document.body.style.overflow = 'hidden';
       window.addEventListener('keydown', handleKeyDown);
+    } else {
+      document.body.style.overflow = 'unset';
     }
+
     return () => {
-      document.body.style.overflow = 'auto';
+      document.body.style.overflow = 'unset';
       window.removeEventListener('keydown', handleKeyDown);
     };
   }, [isOpen, onClose]);
@@ -21,24 +23,34 @@ export default function Modal({ isOpen, onClose, title, children, maxWidth = '56
   if (!isOpen) return null;
 
   return (
-    <div className="modal-backdrop" onClick={onClose}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
+      {/* Backdrop */}
       <div
-        className="modal-content"
-        style={{ maxWidth }}
+        className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity duration-300"
+        onClick={onClose}
+      />
+
+      {/* Dialog Window */}
+      <div
+        className={`relative bg-white rounded-3xl shadow-2xl border border-slate-100 w-full ${maxWidth} z-10 overflow-hidden transform transition-all duration-300 scale-100`}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="modal-header">
-          <h3 className="modal-title">{title}</h3>
+        {/* Header */}
+        <div className="flex items-center justify-between p-5 sm:p-6 border-b border-slate-100">
+          <h3 className="font-heading font-bold text-lg sm:text-xl text-slate-900">
+            {title}
+          </h3>
           <button
             type="button"
-            className="navbar-icon-btn"
             onClick={onClose}
-            aria-label="Close modal"
+            className="p-2 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-full transition-colors"
           >
-            <X size={20} />
+            <X className="w-5 h-5" />
           </button>
         </div>
-        <div className="modal-body">
+
+        {/* Body */}
+        <div className="p-5 sm:p-6 max-h-[80vh] overflow-y-auto">
           {children}
         </div>
       </div>

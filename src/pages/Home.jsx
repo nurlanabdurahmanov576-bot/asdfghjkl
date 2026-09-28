@@ -1,263 +1,130 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useTrips } from '../context/TripContext';
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { Sparkles, ArrowRight, ShieldCheck, Compass, Heart, Award, MapPin } from 'lucide-react';
 import Hero from '../components/Hero';
-import DestinationCard from '../components/DestinationCard';
-import SearchBar from '../components/SearchBar';
-import Modal from '../components/Modal';
-import Button from '../components/Button';
-import {
-  Compass,
-  Sparkles,
-  Map,
-  ShieldCheck,
-  Zap,
-  DollarSign,
-  Star,
-  ArrowRight,
-  Clock,
-  Calendar
-} from 'lucide-react';
+import CategoryCard from '../components/CategoryCard';
+import PlaceCard from '../components/PlaceCard';
+import { CATEGORIES } from '../data/categories';
+import { PLACES } from '../data/places';
 
 export default function Home() {
-  const { destinations, createTrip } = useTrips();
-  const navigate = useNavigate();
+  // Рекомендуемые места (популярные с высоким рейтингом)
+  const recommendedPlaces = PLACES.filter(p => p.isPopular).slice(0, 6);
 
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedDestination, setSelectedDestination] = useState(null);
-
-  // Filter destinations
-  const filteredDestinations = destinations.filter(d =>
-    d.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    d.country.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
-  const handleExploreDestination = (dest) => {
-    setSelectedDestination(dest);
-  };
-
-  const handleStartTripWithDest = (dest) => {
-    createTrip({
-      title: `${dest.name} Adventure`,
-      destination: dest.name,
-      startDate: '2026-10-12',
-      endDate: '2026-10-20',
-      travelers: 2,
-      budget: dest.costValue || 2500,
-      coverImage: dest.image
-    });
-    setSelectedDestination(null);
-    navigate('/planner');
+  // Считаем количество мест в каждой категории
+  const getCategoryCount = (catId) => {
+    return PLACES.filter(p => p.category === catId).length;
   };
 
   return (
-    <div>
-      {/* Hero Section */}
+    <div className="space-y-16 sm:space-y-24">
+      {/* Hero section with SearchBar */}
       <Hero />
 
-      {/* Popular Destinations Section */}
-      <section style={{ padding: '80px 0 60px' }}>
-        <div className="container-wide">
-          <div className="section-header">
-            <div className="section-title-wrap">
-              <span className="section-badge">
-                <Compass size={16} />
-                Curated Travel Guides
-              </span>
-              <h2 className="section-title">Popular destinations</h2>
-              <p className="section-description">
-                Explore handpicked iconic cities, authentic culture, world-class dining, and tailored itineraries.
-              </p>
-            </div>
-
-            <SearchBar
-              value={searchQuery}
-              onChange={setSearchQuery}
-              placeholder="Filter cities or countries..."
-            />
-          </div>
-
-          {/* Destinations Grid */}
-          <div className="destinations-grid">
-            {filteredDestinations.map(dest => (
-              <DestinationCard
-                key={dest.id}
-                destination={dest}
-                onExplore={handleExploreDestination}
-              />
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Why Choose Triply Section */}
-      <section style={{ padding: '60px 0 80px', background: 'var(--bg-subtle)' }}>
-        <div className="container">
-          <div style={{ textAlign: 'center', maxWidth: '720px', margin: '0 auto 48px' }}>
-            <span className="section-badge" style={{ justifyContent: 'center' }}>
-              <Sparkles size={16} />
-              Intelligent Itinerary Engine
-            </span>
-            <h2 className="section-title" style={{ marginTop: 8 }}>
-              Everything you need for seamless journeys
-            </h2>
-            <p className="section-description" style={{ margin: '8px auto 0' }}>
-              From drag-and-drop daily schedules and smart budget management to curated local attractions and AI tips.
-            </p>
-          </div>
-
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '24px' }}>
-            <div
-              style={{
-                background: '#ffffff',
-                padding: '30px',
-                borderRadius: 'var(--radius-xl)',
-                border: '1px solid var(--border)',
-                boxShadow: 'var(--shadow-xs)'
-              }}
-            >
-              <div className="stat-icon-wrap purple" style={{ marginBottom: '18px' }}>
-                <Calendar size={22} />
-              </div>
-              <h3 style={{ fontSize: '1.2rem', marginBottom: '8px', fontWeight: 800 }}>Day-by-Day Itinerary</h3>
-              <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>
-                Organize arrival, hotel check-in, temple visits, and dining with exact time slots and custom notes.
-              </p>
-            </div>
-
-            <div
-              style={{
-                background: '#ffffff',
-                padding: '30px',
-                borderRadius: 'var(--radius-xl)',
-                border: '1px solid var(--border)',
-                boxShadow: 'var(--shadow-xs)'
-              }}
-            >
-              <div className="stat-icon-wrap emerald" style={{ marginBottom: '18px' }}>
-                <DollarSign size={22} />
-              </div>
-              <h3 style={{ fontSize: '1.2rem', marginBottom: '8px', fontWeight: 800 }}>Real-time Budget Tracker</h3>
-              <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>
-                Track flights, hotels, food, and activities. Know your remaining balance dynamically at every step.
-              </p>
-            </div>
-
-            <div
-              style={{
-                background: '#ffffff',
-                padding: '30px',
-                borderRadius: 'var(--radius-xl)',
-                border: '1px solid var(--border)',
-                boxShadow: 'var(--shadow-xs)'
-              }}
-            >
-              <div className="stat-icon-wrap blue" style={{ marginBottom: '18px' }}>
-                <Map size={22} />
-              </div>
-              <h3 style={{ fontSize: '1.2rem', marginBottom: '8px', fontWeight: 800 }}>Interactive Waypoint Map</h3>
-              <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>
-                Visualize attractions, hotels, airports, and eateries on an interactive map with optimized route paths.
-              </p>
-            </div>
-
-            <div
-              style={{
-                background: '#ffffff',
-                padding: '30px',
-                borderRadius: 'var(--radius-xl)',
-                border: '1px solid var(--border)',
-                boxShadow: 'var(--shadow-xs)'
-              }}
-            >
-              <div className="stat-icon-wrap amber" style={{ marginBottom: '18px' }}>
-                <Sparkles size={22} />
-              </div>
-              <h3 style={{ fontSize: '1.2rem', marginBottom: '8px', fontWeight: 800 }}>AI Travel Concierge</h3>
-              <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>
-                Get instant packing checklists, hidden gem restaurant recommendations, and 3-day itinerary advice.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Destination Quick Detail Modal */}
-      {selectedDestination && (
-        <Modal
-          isOpen={Boolean(selectedDestination)}
-          onClose={() => setSelectedDestination(null)}
-          title={`Explore ${selectedDestination.name}`}
-          maxWidth="640px"
-        >
+      {/* Categories section */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
           <div>
-            <div
-              style={{
-                position: 'relative',
-                height: '240px',
-                borderRadius: 'var(--radius-lg)',
-                overflow: 'hidden',
-                marginBottom: '20px'
-              }}
-            >
-              <img
-                src={selectedDestination.image}
-                alt={selectedDestination.name}
-                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-              />
-              <span className="card-tag" style={{ top: 14, left: 14 }}>
-                {selectedDestination.country}
-              </span>
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-50 text-brand-700 text-xs font-bold uppercase tracking-wider mb-2">
+              <Compass className="w-3.5 h-3.5 text-brand-600" />
+              <span>Форматы отдыха</span>
             </div>
+            <h2 className="font-heading font-extrabold text-2xl sm:text-3xl lg:text-4xl text-slate-900 tracking-tight">
+              Выберите категорию по душе
+            </h2>
+          </div>
+          <Link
+            to="/catalog"
+            className="inline-flex items-center gap-1.5 text-sm font-bold text-brand-600 hover:text-brand-700 transition-colors group"
+          >
+            <span>Смотреть все локации</span>
+            <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+          </Link>
+        </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
-              <h3 style={{ fontSize: '1.4rem', fontWeight: 800 }}>{selectedDestination.name}</h3>
-              <span style={{ fontSize: '1.3rem', fontWeight: 800, color: 'var(--primary)' }}>
-                {selectedDestination.approxCost}
-              </span>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {CATEGORIES.map((category) => (
+            <CategoryCard
+              key={category.id}
+              category={category}
+              count={getCategoryCount(category.id)}
+            />
+          ))}
+        </div>
+      </section>
+
+      {/* "Рекомендуем сегодня" section */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
+          <div>
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-50 text-amber-800 text-xs font-bold uppercase tracking-wider mb-2">
+              <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+              <span>Топ выбор путешественников</span>
             </div>
+            <h2 className="font-heading font-extrabold text-2xl sm:text-3xl lg:text-4xl text-slate-900 tracking-tight">
+              Рекомендуем сегодня
+            </h2>
+            <p className="text-slate-500 text-sm mt-1 max-w-xl">
+              Проверенные локации с высокими оценками гостей, потрясающими видами и продуманным комфортом.
+            </p>
+          </div>
+          <Link
+            to="/catalog"
+            className="inline-flex items-center gap-1.5 text-sm font-bold text-brand-600 hover:text-brand-700 transition-colors group"
+          >
+            <span>В каталог ({PLACES.length})</span>
+            <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+          </Link>
+        </div>
 
-            <p style={{ fontSize: '0.925rem', color: 'var(--text-muted)', lineHeight: 1.6, marginBottom: '16px' }}>
-              {selectedDestination.description}
+        {/* Places Grid: 1 col on mobile, 2 on tablet, 3 on desktop */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {recommendedPlaces.map((place) => (
+            <PlaceCard key={place.id} place={place} />
+          ))}
+        </div>
+      </section>
+
+      {/* Wellness & Trip Planning Promo Banner */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-brand-900 via-teal-900 to-slate-900 p-8 sm:p-12 text-white shadow-2xl">
+          {/* Decorative shapes */}
+          <div className="absolute top-0 right-0 -translate-y-12 translate-x-12 w-96 h-96 bg-brand-500/20 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute bottom-0 left-1/3 w-64 h-64 bg-teal-400/10 rounded-full blur-2xl pointer-events-none" />
+
+          <div className="relative z-10 max-w-2xl space-y-6">
+            <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-white/10 backdrop-blur-md text-brand-200 text-xs font-bold uppercase tracking-wider">
+              <Award className="w-3.5 h-3.5" />
+              <span>Умный калькулятор поездок</span>
+            </span>
+
+            <h2 className="font-heading font-extrabold text-3xl sm:text-4xl text-white tracking-tight leading-tight">
+              Спланируйте идеальный уикенд с точным расчётом бюджета
+            </h2>
+
+            <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
+              Выберите понравившееся место — сервис автоматически определит ближайший аэропорт,
+              построит маршрут на карте, посчитает трансфер, билеты, еду и проживание,
+              а также сопоставит результат с вашим бюджетом.
             </p>
 
-            <div
-              style={{
-                display: 'grid',
-                gridTemplateColumns: '1fr 1fr',
-                gap: '12px',
-                background: 'var(--bg-subtle)',
-                padding: '16px',
-                borderRadius: 'var(--radius-md)',
-                marginBottom: '20px',
-                fontSize: '0.85rem'
-              }}
-            >
-              <div>
-                <span style={{ color: 'var(--text-muted)', display: 'block' }}>Best Season:</span>
-                <strong>{selectedDestination.bestSeason}</strong>
-              </div>
-              <div>
-                <span style={{ color: 'var(--text-muted)', display: 'block' }}>Local Currency:</span>
-                <strong>{selectedDestination.currency}</strong>
-              </div>
-            </div>
-
-            <div className="modal-footer" style={{ paddingLeft: 0, paddingRight: 0, paddingBottom: 0 }}>
-              <Button variant="secondary" onClick={() => setSelectedDestination(null)}>
-                Close
-              </Button>
-              <Button
-                variant="primary"
-                onClick={() => handleStartTripWithDest(selectedDestination)}
-                icon={ArrowRight}
+            <div className="pt-2 flex flex-wrap items-center gap-4">
+              <Link
+                to="/catalog"
+                className="px-7 py-3.5 rounded-2xl bg-white hover:bg-brand-50 text-slate-900 font-bold text-sm shadow-lg transition-all duration-200 hover:scale-105"
               >
-                Start Planning Trip
-              </Button>
+                Подобрать отдых
+              </Link>
+              <Link
+                to="/map"
+                className="px-7 py-3.5 rounded-2xl bg-white/10 hover:bg-white/20 text-white font-bold text-sm backdrop-blur-md transition-colors"
+              >
+                Открыть на карте
+              </Link>
             </div>
           </div>
-        </Modal>
-      )}
+        </div>
+      </section>
     </div>
   );
 }
